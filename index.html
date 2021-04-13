@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <script src="https://kit.fontawesome.com/934a39e35a.js" crossorigin="anonymous"></script>
+
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Inline+Display&display=swap" rel="stylesheet"> 
+
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Condensed&display=swap" rel="stylesheet"> 
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <title>Calculator</title>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='calculator'>
+                <div class='display'>0</div>
+                <div class='controls'>
+                    <button id='7' class='ctrl-btn num'>7</button>
+                    <button id='8' class='ctrl-btn num'>8</button>
+                    <button id='9' class='ctrl-btn num'>9</button>
+                    <button id='/' class='ctrl-btn func'>/</button>
+                    <button id='clear' class='ctrl-btn'>C</button>
+                    <button id='4' class='ctrl-btn num'>4</button>
+                    <button id='5' class='ctrl-btn num'>5</button>
+                    <button id='6' class='ctrl-btn num'>6</button>
+                    <button id='*' class='ctrl-btn func'>*</button>
+                    <button id='Backspace' class='ctrl-btn'>←</button>
+                    <button id='3' class='ctrl-btn num'>3</button>
+                    <button id='2' class='ctrl-btn num'>2</button>
+                    <button id='1' class='ctrl-btn num'>1</button>
+                    <button id='-' class='ctrl-btn func'>-</button>
+                    <button id='total' class='ctrl-btn total-btn btn-success'>=</button>
+                    <button id='0' class='ctrl-btn num'>0</button>
+                    <button id='point' class='ctrl-btn num'>.</button>
+                    <button id='%' class='ctrl-btn'>%</button>
+                    <button id='+' class='ctrl-btn func'>+</button>                   
+                </div>
+            </div>
+        </div>
+        
+    </body>
+
+</html>
+
+<script>
+    let firstNumber = undefined;
+    let secondNumber = undefined;
+    let operator = undefined; 
+    let answer = 0;
+    let newInput = true;
+    let display = document.querySelector('.display');
+    let buttons = document.querySelectorAll('button');
+    let point = document.querySelector('#point');
+
+
+    window.addEventListener('keydown', (e)=>{
+        let btn = document.getElementById(`${e.key}`);
+        if (e.key == '.') btn = document.getElementById('point');
+        if (e.key == 'Escape') btn = document.getElementById('clear');
+        if (e.key == 'Enter') btn = document.getElementById('total');
+                
+        if (btn) {
+            btn.click();
+            btn.focus();
+        }   
+                         
+    });
+
+    
+    buttons.forEach((button) =>{
+        button.classList.add('btn', 'btn-primary', 'btn-lg');
+    })
+
+    buttons.forEach((button)=>{
+        button.addEventListener('click',()=>{
+            if (button.classList.contains('num')) {
+                numpress(button.textContent);
+            }
+
+            if (button.classList.contains('func')) {
+                funcpress(button.textContent);
+            }
+
+            if (button.id == 'clear') {
+                clear();
+                display.textContent = '0';
+                newInput = true;
+            }
+
+            if (button.id == 'total') {
+                total();
+            }
+
+            if (button.id == 'Backspace') {
+                backspace();
+            }
+
+            if (button.id == '%') {
+                getpercent();
+            }
+
+        })
+    });
+
+    function backspace(){
+        let numArray = display.textContent.split('');
+        if (numArray.length == 1) {
+            numArray[0] = 0;
+            newInput = true;
+        } else {
+            numArray.pop();
+            if (numArray[numArray.length -1] == '.') numArray.pop()
+        }
+        display.textContent = numArray.join('');
+    }
+
+    function numpress(num){
+        if (num === '.') {
+            point.setAttribute('disabled', true);
+        }
+        if (newInput && num ==='.'){
+            newInput = false;
+            display.textContent = '0';
+        }
+        if (newInput) {
+            display.textContent = '';
+            newInput = false;
+            point.removeAttribute('disabled');
+        }
+        display.textContent += num;
+    }
+
+    function funcpress(func){
+        if (firstNumber === undefined) {
+            firstNumber = display.textContent;
+        } else if (!newInput) {
+            secondNumber = display.textContent;
+            firstNumber = operate();
+        }
+        point.removeAttribute('disabled');
+        operator = func;
+        newInput = true;
+    }
+
+    function clear(){       //clears display
+        display.textContent = '';
+        firstNumber = undefined;
+        point.removeAttribute('disabled');
+    }
+
+    function total(){
+        if (firstNumber === undefined && secondNumber !== undefined) {
+            firstNumber = display.textContent;
+            operate();
+        } else if (firstNumber !== undefined){
+            secondNumber = display.textContent;
+            operate();
+        }
+    }
+
+    function getpercent(){
+        if (firstNumber !== undefined && operator !== undefined) {
+   
+            let percent = parseFloat(display.textContent);
+            let result = firstNumber * percent / 100; 
+            result = Math.round(result*1000000)/1000000;
+            newInput = true;
+            display.textContent = result;
+            return result;
+        }
+        return undefined;
+    }
+
+    function operate(){
+
+        if (firstNumber === undefined || secondNumber === undefined || operator === undefined) {
+            alert("Something went wrong");
+            clear();
+            return undefined;
+        };
+
+        let result = undefined;
+        let valOne = parseFloat(firstNumber);
+        let valTwo = parseFloat(secondNumber);
+        switch(operator) {
+            case('+'):
+                result = valOne + valTwo;
+                break;
+            case('-'):
+                result = valOne - valTwo;
+                break;
+            case('*'):
+                result = valOne * valTwo;
+                break;
+            case('/'):
+                if (valTwo == 0) {
+                    alert("Division by 0. Error");
+                    clear();
+                    return undefined;
+                }
+                result = valOne / valTwo;
+                break;
+        }
+        clear();
+        newInput = true;
+        result = Math.round(result*1000000)/1000000;
+        display.textContent = result;
+        return result;
+    }
+</script>
