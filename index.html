@@ -135,6 +135,7 @@
     }
 
     function funcpress(func){
+        if (!parseFloat(display.textContent)) return undefined; 
         if (firstNumber === undefined) {
             firstNumber = display.textContent;
         } else if (!newInput) {
@@ -198,8 +199,10 @@
                 break;
             case('/'):
                 if (valTwo == 0) {
-                    alert("Division by 0. Error");
+                    
                     clear();
+                    display.textContent='Error';
+                    newInput = true;
                     return undefined;
                 }
                 result = valOne / valTwo;

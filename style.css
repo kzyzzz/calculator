@@ -43,7 +43,7 @@
     grid-template-rows: repeat(4, 1fr);
     border-bottom: 30px solid #1ABC9C;
     box-shadow: 0 12px 0 #92B372;
-    border-radius: 15px 15px 15px 0px;
+    border-radius: 0 0 15px 15px;
     font-family: 'Ubuntu Condensed', sans-serif;
     background-color: #9EB2C0;
 }
